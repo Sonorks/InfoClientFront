@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Modal, Form, Button, ModalFooter} from 'react-bootstrap';
+import {Modal, Form, Button} from 'react-bootstrap';
 import axios from 'axios';
 
 class VisitForm extends Component{
