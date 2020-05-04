@@ -11,7 +11,8 @@ class VisitForm extends Component{
             "salesRepresentative": "1",
             "net": 0,
             "visitTotal": 0,
-            "description": ""
+            "description": "",
+            "city":""
         }
     }
 
@@ -37,6 +38,9 @@ class VisitForm extends Component{
             let visit = this.state.visit;
             visit["customer"] = customer.nit;
             visit["date"] = this.getFormatDate();
+            visit["city"] = customer.city;
+
+            console.log(visit["city"]);
 
             axios.post("http://localhost:8080/visit", visit)
             .then(response=>{

@@ -8,6 +8,8 @@ import axios from 'axios';
 import Visit from './components/visit/Visit';
 import VisitForm from './components/visit/VisitForm';
 import {Table, Container, Button, Modal} from 'react-bootstrap';
+import CreditChart from './components/reportes/CreditChart';
+import VisitsPerCityChart from './components/reportes/VisitsPerCityChart';
 
 class App extends Component{
 
@@ -23,12 +25,24 @@ class App extends Component{
     newCustomer: {},
     visitsNit: {},
     visitsByCustomer: [],
-    salesRep: []
+    salesRep: [],
+    visitsPerCity: [],
+    showVisitsPerCity: false
   }
 
   componentDidMount(){
     this.getAllCustomers();
     this.getSalesRep();
+  }
+
+  getVisitsPerCity = () => {
+    axios.get('http://localhost:8080/visit/city')
+    .then(response => {
+      this.setState({visitsPerCity:response.data})
+    })
+    .catch(error =>{
+      alert(error.response.data)
+    });
   }
 
   getSalesRep = () => {
@@ -42,7 +56,7 @@ class App extends Component{
   }
 
   getAllVisitsByCustomer = (customer) => {
-    axios.get('http://localhost:8080/visit/'+customer)
+    axios.get('http://localhost:8080/visit/nit/'+customer)
     .then(response => {
         this.setState({visitsByCustomer:response.data});
     })
@@ -176,6 +190,10 @@ class App extends Component{
     this.getAllCustomers();
   }
 
+  showReportVisitsByCity = () => {
+    this.setState({showVisitsPerCity:!this.state.showVisitsPerCity});
+  }
+
 
   render() {
     let customers = null;
@@ -183,6 +201,12 @@ class App extends Component{
     let customerActions = null;
     let visits = null;
     let visitForm = null;
+    let visitsPerCityChart = null;
+    if(this.state.showVisitsPerCity){
+      this.getVisitsPerCity();
+      visitsPerCityChart = 
+        <VisitsPerCityChart visitsPerCity={this.state.visitsPerCity} />
+    }
     customers = (            
           this.state.customers.map((customer, index) => {
           return <Customer 
@@ -232,6 +256,12 @@ class App extends Component{
         <Modal show={true} size="lg">
           <div className="App"><h1>VISITS</h1></div>
           <Container>
+              <Container>
+              <CreditChart 
+                availableCredit = {this.state.customerToUpdate.availableCredit}
+                usedCredit = {this.state.customerToUpdate.creditLimit - this.state.customerToUpdate.availableCredit}
+              />
+              </Container>
               <Table striped bordered hover responsive>
                   <tbody>
                       <tr>
@@ -266,7 +296,9 @@ class App extends Component{
         {customerActions}
         {visits}
         {visitForm}
-        <Button variant="success" onClick={()=>this.setState({showCreateForm:true})}>CREATE CUSTOMER</Button>
+        <Button variant="success" onClick={()=>this.setState({showCreateForm:true})}>CREATE CUSTOMER</Button><p/><p/><p/>
+        {visitsPerCityChart}
+        <Button variant="info" onClick={this.showReportVisitsByCity}>SHOW REPORT VISITS BY CITY</Button>
         <p/><p/><p/><p/>
         <Container>
           <Table striped bordered hover responsive size="sm">
