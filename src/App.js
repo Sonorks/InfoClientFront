@@ -300,10 +300,6 @@ class App extends Component{
     }
     return (
       <div>
-        <div className="sidenav">
-          <Button variant="success" onClick={()=>this.setState({showCreateForm:true})}>CREATE CUSTOMER</Button><p/><p/><p/>
-          <Button variant="info" onClick={this.showReportVisitsByCity}>SHOW REPORT VISITS BY CITY</Button>
-        </div>
         <div className="App">
           <h1>CUSTOMERS</h1>
           <p/><p/><p/>
@@ -311,6 +307,9 @@ class App extends Component{
           {customerActions}
           {visits}
           {visitForm}
+          <Button variant="success" onClick={()=>this.setState({showCreateForm:true})}>CREATE CUSTOMER</Button><p/><p/><p/>
+          <p/><p/><p/><p/>
+          <Button variant="info" onClick={this.showReportVisitsByCity}>SHOW REPORT VISITS BY CITY</Button>
           <p/><p/><p/><p/>
           <input type="text" placeholder = "filter by name" onChange={(event) => this.filterCustomer(event)} value={filter}></input>
           <p/><p/><p/><p/>
