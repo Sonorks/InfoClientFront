@@ -121,9 +121,7 @@ class App extends Component{
   createCustomer = () => {
     axios.post('https://info-client-10pearls.herokuapp.com/customer', this.state.newCustomer)
     .then(response => {
-      const customers = [...this.state.customers];
-      customers.push(this.state.newCustomer);
-      this.setState({customers: customers});
+      this.getAllCustomers()
       this.setState({showCreateForm: false});
       alert(response.data)
     })
