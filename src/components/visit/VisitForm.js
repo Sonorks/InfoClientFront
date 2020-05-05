@@ -20,7 +20,7 @@ class VisitForm extends Component{
         const visit = this.state.visit;
         visit[event.target.name] = event.target.value;
         if(event.target.name === "net"){
-            let total = event.target.value * customer.visitsPercentage;
+            let total = event.target.value * (customer.visitsPercentage / 100);
             if(total <= customer.availableCredit){
                 visit["visitTotal"] = total;
             } else {
