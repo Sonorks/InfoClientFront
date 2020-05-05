@@ -8,7 +8,7 @@ import React from 'react'
 const VisitsPerCityChart = (props) => {
     let output = [['City', 'Visits']]
     props.visitsPerCity.map((visitPerCity) => {
-        output.push([visitPerCity.city, visitPerCity.number])
+        output.push([visitPerCity.city, +visitPerCity.number])
     })
     return (
         <Chart

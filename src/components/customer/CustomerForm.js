@@ -15,7 +15,7 @@ class CustomerForm extends Component{
       }
 
     getCountries(){
-        axios.get('http://localhost:8080/master/country')
+        axios.get('https://info-client-10pearls.herokuapp.com/master/country')
         .then(response =>{
             console.log(response.data)
             this.setState({countries:response.data});
@@ -26,7 +26,7 @@ class CustomerForm extends Component{
     }
 
     getStatesByCountry(event){
-        axios.get("http://localhost:8080/master/state/"+event.target.value)
+        axios.get("https://info-client-10pearls.herokuapp.com/master/state/"+event.target.value)
         .then(response => {
             this.setState({states:response.data})
         })
@@ -37,7 +37,7 @@ class CustomerForm extends Component{
     }
 
     getCitiesByState(event){
-        axios.get("http://localhost:8080/master/city/"+event.target.value)
+        axios.get("https://info-client-10pearls.herokuapp.com/master/city/"+event.target.value)
         .then(response => {
             this.setState({cities:response.data})
         })

@@ -42,7 +42,7 @@ class VisitForm extends Component{
 
             console.log(visit["city"]);
 
-            axios.post("http://localhost:8080/visit", visit)
+            axios.post("https://info-client-10pearls.herokuapp.com/visit", visit)
             .then(response=>{
                 alert("VISIT CREATED")
                 this.setState({visit: {
@@ -85,7 +85,7 @@ class VisitForm extends Component{
 
         return(
             <Modal show={true}>
-                <Modal.Header>
+                <Modal.Header closeButton>
                     CREATE VISIT ASOCIATED TO CUSTOMER {this.props.customer.nit}
                 </Modal.Header>
                 <Modal.Body>

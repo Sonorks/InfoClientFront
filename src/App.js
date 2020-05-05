@@ -27,16 +27,18 @@ class App extends Component{
     visitsByCustomer: [],
     salesRep: [],
     visitsPerCity: [],
-    showVisitsPerCity: false
+    showVisitsPerCity: false,
+    filter: ""
   }
 
   componentDidMount(){
     this.getAllCustomers();
     this.getSalesRep();
+    this.getVisitsPerCity();
   }
 
   getVisitsPerCity = () => {
-    axios.get('http://localhost:8080/visit/city')
+    axios.get('https://info-client-10pearls.herokuapp.com/visit/city')
     .then(response => {
       this.setState({visitsPerCity:response.data})
     })
@@ -46,7 +48,7 @@ class App extends Component{
   }
 
   getSalesRep = () => {
-    axios.get('http://localhost:8080/master/salesrep')
+    axios.get('https://info-client-10pearls.herokuapp.com/master/salesrep')
     .then(response => {
       this.setState({salesRep: response.data})
     })
@@ -56,7 +58,7 @@ class App extends Component{
   }
 
   getAllVisitsByCustomer = (customer) => {
-    axios.get('http://localhost:8080/visit/nit/'+customer)
+    axios.get('https://info-client-10pearls.herokuapp.com/visit/nit/'+customer)
     .then(response => {
         this.setState({visitsByCustomer:response.data});
     })
@@ -66,7 +68,7 @@ class App extends Component{
  }
 
   getAllCustomers () {
-    axios.get('http://localhost:8080/customer')
+    axios.get('https://info-client-10pearls.herokuapp.com/customer')
     .then(response => {
         this.setState({customers:response.data});
     })
@@ -86,7 +88,7 @@ class App extends Component{
   }
 
   deleteCustomer = (nit) =>{
-    axios.delete('http://localhost:8080/customer/'+nit)
+    axios.delete('https://info-client-10pearls.herokuapp.com/customer/'+nit)
     .then(response => {
       const index = this.state.customers.findIndex(c => {
         return c.nit === nit;
@@ -106,7 +108,7 @@ class App extends Component{
 
   updateCustomer = () =>{
     console.log(this.state.customerToUpdate)
-    axios.put('http://localhost:8080/customer', this.state.customerToUpdate)
+    axios.put('https://info-client-10pearls.herokuapp.com/customer', this.state.customerToUpdate)
     .then(response => {
       this.getAllCustomers()
       this.setState({showUpdateForm: false});
@@ -117,7 +119,7 @@ class App extends Component{
   }
   
   createCustomer = () => {
-    axios.post('http://localhost:8080/customer', this.state.newCustomer)
+    axios.post('https://info-client-10pearls.herokuapp.com/customer', this.state.newCustomer)
     .then(response => {
       const customers = [...this.state.customers];
       customers.push(this.state.newCustomer);
@@ -194,6 +196,10 @@ class App extends Component{
     this.setState({showVisitsPerCity:!this.state.showVisitsPerCity});
   }
 
+  filterCustomer = (event) => {
+    this.setState({filter:event.target.value})
+  }
+
 
   render() {
     let customers = null;
@@ -202,17 +208,21 @@ class App extends Component{
     let visits = null;
     let visitForm = null;
     let visitsPerCityChart = null;
+    let filter = this.state.filter;
     if(this.state.showVisitsPerCity){
-      this.getVisitsPerCity();
       visitsPerCityChart = 
         <VisitsPerCityChart visitsPerCity={this.state.visitsPerCity} />
     }
     customers = (            
           this.state.customers.map((customer, index) => {
-          return <Customer 
-            key={customer.nit}
-            customer={customer}
-            showCustomerActions={() => this.showCustomerActions(customer)}/>
+            if(customer.fullname.includes(filter)){
+              return <Customer 
+                key={customer.nit}
+                customer={customer}
+                showCustomerActions={() => this.showCustomerActions(customer)}/>
+            } else {
+              return null;
+            }
       }));
     if(this.state.showCustomerActions){
       customerActions = (
@@ -289,36 +299,42 @@ class App extends Component{
       )
     }
     return (
-      <div className="App">
-        <h1>CUSTOMERS</h1>
-        <p/><p/><p/>
-        {customerForm}
-        {customerActions}
-        {visits}
-        {visitForm}
-        <Button variant="success" onClick={()=>this.setState({showCreateForm:true})}>CREATE CUSTOMER</Button><p/><p/><p/>
-        {visitsPerCityChart}
-        <Button variant="info" onClick={this.showReportVisitsByCity}>SHOW REPORT VISITS BY CITY</Button>
-        <p/><p/><p/><p/>
-        <Container>
-          <Table striped bordered hover responsive size="sm">
-            <tbody>
-              <tr>
-                <th>NIT</th>
-                <th>FULLNAME</th>
-                <th>ADDRESS</th>
-                <th>PHONE</th>
-                <th>CITY</th>
-                <th>STATE</th>
-                <th>COUNTRY</th>
-                <th>CREDIT LIMIT</th>
-                <th>AVAILABLE CREDIT</th>
-                <th>VISITS PERCENTAGE</th>
-              </tr>
-              {customers}
-            </tbody>
-          </Table>
-        </Container>
+      <div>
+        <div className="sidenav">
+          <Button variant="success" onClick={()=>this.setState({showCreateForm:true})}>CREATE CUSTOMER</Button><p/><p/><p/>
+          <Button variant="info" onClick={this.showReportVisitsByCity}>SHOW REPORT VISITS BY CITY</Button>
+        </div>
+        <div className="App">
+          <h1>CUSTOMERS</h1>
+          <p/><p/><p/>
+          {customerForm}
+          {customerActions}
+          {visits}
+          {visitForm}
+          <p/><p/><p/><p/>
+          <input type="text" placeholder = "filter by name" onChange={(event) => this.filterCustomer(event)} value={filter}></input>
+          <p/><p/><p/><p/>
+          <Container>
+            {visitsPerCityChart}
+            <Table striped bordered hover responsive size="sm">
+              <tbody>
+                <tr>
+                  <th>NIT</th>
+                  <th>FULLNAME</th>
+                  <th>ADDRESS</th>
+                  <th>PHONE</th>
+                  <th>CITY</th>
+                  <th>STATE</th>
+                  <th>COUNTRY</th>
+                  <th>CREDIT LIMIT</th>
+                  <th>AVAILABLE CREDIT</th>
+                  <th>VISITS PERCENTAGE</th>
+                </tr>
+                {customers}
+              </tbody>
+            </Table>
+          </Container>
+        </div>
       </div>
     );
   }
